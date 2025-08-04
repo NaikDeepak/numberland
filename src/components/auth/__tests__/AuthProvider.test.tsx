@@ -1,11 +1,13 @@
 import React from "react"
 import { render, screen, fireEvent, waitFor } from "@testing-library/react"
+import "@testing-library/jest-dom"
 import { AuthProvider } from "../AuthProvider"
 import { AuthState } from "../../../types/auth"
 
 // Mock Firebase auth
 jest.mock("../../../utils/firebase", () => ({
   auth: undefined, // Mock auth as undefined to test development mode
+  getAuthInstance: jest.fn(() => ({})),
 }))
 
 // Mock signOut

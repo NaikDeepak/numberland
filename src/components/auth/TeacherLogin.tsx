@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { signInWithEmailAndPassword } from "firebase/auth"
-import { auth } from "../../utils/firebase"
+import { getAuthInstance } from "../../utils/firebase"
 import { useAuth } from "./AuthProvider"
 
 interface TeacherLoginProps {
@@ -46,7 +46,7 @@ export const TeacherLogin: React.FC<TeacherLoginProps> = ({ onSuccess }) => {
 
     try {
       // Sign in with email and password
-      const result = await signInWithEmailAndPassword(auth, email.trim(), password)
+      const result = await signInWithEmailAndPassword(getAuthInstance(), email.trim(), password)
 
       // Create teacher user object
       const teacher = {

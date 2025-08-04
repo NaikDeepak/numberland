@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { signInAnonymously } from "firebase/auth"
-import { auth } from "../../utils/firebase"
+import { getAuthInstance } from "../../utils/firebase"
 import { useAuth } from "./AuthProvider"
 
 interface StudentLoginProps {
@@ -46,7 +46,7 @@ export const StudentLogin: React.FC<StudentLoginProps> = ({ onSuccess }) => {
 
     try {
       // Sign in anonymously
-      const result = await signInAnonymously(auth)
+      const result = await signInAnonymously(getAuthInstance())
 
       // Create student user object
       const student = {

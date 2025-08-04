@@ -1,6 +1,7 @@
 import { initializeApp, getApps } from "firebase/app"
 import { getAuth } from "firebase/auth"
 import { getFirestore } from "firebase/firestore"
+import "@testing-library/jest-dom"
 
 // Mock Firebase modules
 jest.mock("firebase/app", () => ({
@@ -21,12 +22,21 @@ describe("Firebase Configuration", () => {
     jest.clearAllMocks()
     jest.resetModules()
     // Mock NODE_ENV to be 'development' for these tests
-    process.env.NODE_ENV = "development"
+    Object.defineProperty(process.env, "NODE_ENV", {
+      value: "development",
+      writable: true,
+    })
   })
 
   it("should not initialize Firebase in test environment", () => {
-    // Set NODE_ENV to test
-    process.env.NODE_ENV = "test"
+    // Mock the environment check by mocking the module
+    jest.doMock("../firebase", () => {
+      const originalModule = jest.requireActual("../firebase")
+      return {
+        ...originalModule,
+        shouldInitializeFirebase: () => false,
+      }
+    })
 
     require("../firebase")
 

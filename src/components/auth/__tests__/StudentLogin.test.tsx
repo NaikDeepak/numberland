@@ -1,10 +1,11 @@
 import React from "react"
 import { render, screen, fireEvent, waitFor } from "@testing-library/react"
+import "@testing-library/jest-dom"
 import { StudentLogin } from "../StudentLogin"
 
 // Mock Firebase auth
 jest.mock("../../../utils/firebase", () => ({
-  auth: {},
+  getAuthInstance: jest.fn(() => ({})),
 }))
 
 // Mock signInAnonymously

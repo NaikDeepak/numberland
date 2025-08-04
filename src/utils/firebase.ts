@@ -54,5 +54,21 @@ if (shouldInitializeFirebase()) {
   }
 }
 
+// Helper function to get auth with proper error handling
+export const getAuthInstance = (): Auth => {
+  if (!auth) {
+    throw new Error("Firebase Auth is not initialized. Please check your Firebase configuration.")
+  }
+  return auth
+}
+
+// Helper function to get firestore with proper error handling
+export const getFirestoreInstance = (): Firestore => {
+  if (!db) {
+    throw new Error("Firebase Firestore is not initialized. Please check your Firebase configuration.")
+  }
+  return db
+}
+
 export { auth, db }
 export default app
