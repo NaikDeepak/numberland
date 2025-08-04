@@ -189,6 +189,216 @@ describe('Student Quest Flow', () => {
 
 ## UI/UX Patterns
 
+### Design System & Color Palette
+```typescript
+// Color constants for consistent theming
+export const colors = {
+  primary: '#4A90E2',    // Bright Blue - trust, friendly
+  secondary: '#FFD93D',  // Sunny Yellow - fun, cheerful
+  accent: '#6BCB77',     // Fresh Green - success, progress
+  error: '#FF6B6B',      // Soft Red - playful, not scary
+  background: '#F7F9FC', // Light Sky/Off-White
+  text: '#2D3748',       // Dark gray for readability
+  textLight: '#718096'   // Light gray for secondary text
+};
+
+// Typography scale for kid-friendly text
+export const typography = {
+  heading: 'text-3xl font-bold text-gray-800',
+  subheading: 'text-xl font-semibold text-gray-700',
+  body: 'text-lg text-gray-600',
+  caption: 'text-sm text-gray-500'
+};
+```
+
+### Kid-Friendly Component Patterns
+```typescript
+// Large, tappable button component
+interface PlayfulButtonProps {
+  children: React.ReactNode;
+  onClick: () => void;
+  variant?: 'primary' | 'secondary' | 'success' | 'error';
+  size?: 'sm' | 'md' | 'lg';
+  disabled?: boolean;
+}
+
+const PlayfulButton: React.FC<PlayfulButtonProps> = ({
+  children,
+  onClick,
+  variant = 'primary',
+  size = 'lg',
+  disabled = false
+}) => (
+  <button
+    onClick={onClick}
+    disabled={disabled}
+    className={`
+      rounded-2xl font-bold transition-all duration-200
+      transform hover:scale-105 active:scale-95
+      focus:outline-none focus:ring-4 focus:ring-opacity-50
+      ${size === 'lg' ? 'px-8 py-4 text-xl' : 'px-6 py-3 text-lg'}
+      ${variant === 'primary' ? 'bg-blue-500 text-white hover:bg-blue-600' : ''}
+      ${variant === 'secondary' ? 'bg-yellow-400 text-gray-800 hover:bg-yellow-500' : ''}
+      ${variant === 'success' ? 'bg-green-500 text-white hover:bg-green-600' : ''}
+      ${variant === 'error' ? 'bg-red-400 text-white hover:bg-red-500' : ''}
+      ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
+    `}
+  >
+    {children}
+  </button>
+);
+```
+
+### Card Component Patterns
+```typescript
+// Playful card component for math problems
+interface ProblemCardProps {
+  problem: MathProblem;
+  onAnswer: (answer: number) => void;
+  isAnswered: boolean;
+  isCorrect?: boolean;
+}
+
+const ProblemCard: React.FC<ProblemCardProps> = ({
+  problem,
+  onAnswer,
+  isAnswered,
+  isCorrect
+}) => (
+  <div className="
+    bg-white rounded-3xl shadow-lg p-8
+    border-4 border-blue-200
+    transform transition-all duration-300
+    hover:shadow-xl hover:scale-105
+  ">
+    <div className="text-center">
+      <h2 className="text-4xl font-bold text-gray-800 mb-6">
+        {problem.question}
+      </h2>
+      
+      {/* Illustrated objects for visual math */}
+      <div className="flex justify-center items-center gap-4 mb-8">
+        {renderMathObjects(problem)}
+      </div>
+      
+      {/* Answer options */}
+      <div className="grid grid-cols-2 gap-4">
+        {problem.options?.map((option, index) => (
+          <PlayfulButton
+            key={index}
+            onClick={() => onAnswer(option)}
+            variant={isAnswered && option === problem.answer ? 'success' : 'secondary'}
+            size="lg"
+          >
+            {option}
+          </PlayfulButton>
+        ))}
+      </div>
+    </div>
+  </div>
+);
+```
+
+### Animation Patterns
+```typescript
+// Framer Motion for smooth animations
+const FadeInUp: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5 }}
+  >
+    {children}
+  </motion.div>
+);
+
+// Confetti animation for rewards
+const ConfettiAnimation: React.FC<{ isVisible: boolean }> = ({ isVisible }) => (
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: isVisible ? 1 : 0 }}
+    transition={{ duration: 0.3 }}
+    className="fixed inset-0 pointer-events-none z-50"
+  >
+    {/* Confetti particles */}
+  </motion.div>
+);
+
+// Treasure chest animation for level-up
+const TreasureChestAnimation: React.FC<{ isOpen: boolean }> = ({ isOpen }) => (
+  <motion.div
+    animate={{ 
+      scale: isOpen ? [1, 1.2, 1] : 1,
+      rotate: isOpen ? [0, 10, -10, 0] : 0
+    }}
+    transition={{ duration: 0.6 }}
+    className="text-6xl"
+  >
+    🎁
+  </motion.div>
+);
+```
+
+### Progress Visualization Patterns
+```typescript
+// XP bar with stars
+interface XPBarProps {
+  currentXP: number;
+  levelXP: number;
+  level: number;
+}
+
+const XPBar: React.FC<XPBarProps> = ({ currentXP, levelXP, level }) => (
+  <div className="bg-gray-200 rounded-full h-4 overflow-hidden">
+    <motion.div
+      className="bg-gradient-to-r from-blue-500 to-green-500 h-full"
+      initial={{ width: 0 }}
+      animate={{ width: `${(currentXP / levelXP) * 100}%` }}
+      transition={{ duration: 1 }}
+    />
+    <div className="flex justify-between items-center mt-2">
+      <span className="text-sm font-semibold text-gray-600">
+        Level {level}
+      </span>
+      <div className="flex gap-1">
+        {[...Array(5)].map((_, i) => (
+          <span key={i} className="text-yellow-400 text-lg">
+            ⭐
+          </span>
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
+// Adventure map progress
+interface AdventureMapProps {
+  completedQuests: number;
+  totalQuests: number;
+}
+
+const AdventureMap: React.FC<AdventureMapProps> = ({ completedQuests, totalQuests }) => (
+  <div className="bg-gradient-to-br from-blue-100 to-green-100 rounded-3xl p-6">
+    <h3 className="text-xl font-bold text-gray-800 mb-4">Your Adventure Map</h3>
+    <div className="flex justify-between items-center">
+      {[...Array(totalQuests)].map((_, i) => (
+        <motion.div
+          key={i}
+          className={`
+            w-12 h-12 rounded-full flex items-center justify-center
+            ${i < completedQuests ? 'bg-green-500' : 'bg-gray-300'}
+          `}
+          animate={i < completedQuests ? { scale: [1, 1.2, 1] } : {}}
+          transition={{ delay: i * 0.1 }}
+        >
+          {i < completedQuests ? '🏆' : '🗺️'}
+        </motion.div>
+      ))}
+    </div>
+  </div>
+);
+```
+
 ### Mobile-First Design
 - **Breakpoints**: Mobile (320px) → Tablet (768px) → Desktop (1024px)
 - **Touch Targets**: Minimum 44px for interactive elements
@@ -219,20 +429,6 @@ const AccessibleButton: React.FC<AccessibleButtonProps> = ({
   >
     {children}
   </button>
-);
-```
-
-### Animation Patterns
-```typescript
-// Framer Motion for smooth animations
-const FadeInUp: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.5 }}
-  >
-    {children}
-  </motion.div>
 );
 ```
 

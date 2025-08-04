@@ -5,7 +5,7 @@ import { useAuth } from "../components/auth/AuthProvider"
 
 export default function HomePage() {
   const [userType, setUserType] = useState<"student" | "teacher" | null>(null)
-  const { state } = useAuth()
+  const { state, logout } = useAuth()
 
   // If user is already authenticated, redirect to appropriate dashboard
   if (state.user) {
@@ -16,7 +16,7 @@ export default function HomePage() {
           <h1 className='text-3xl font-bold text-gray-800 mb-4'>Welcome back, {state.user.name}! 🎉</h1>
           <p className='text-gray-600 mb-6'>You're already signed in. Dashboard coming soon!</p>
           <button
-            onClick={() => window.location.reload()}
+            onClick={logout}
             className='bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors'
           >
             Sign Out

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from "react"
-import { onAuthStateChanged, User as FirebaseUser } from "firebase/auth"
+import { onAuthStateChanged, User as FirebaseUser, signOut } from "firebase/auth"
 import { auth } from "../../utils/firebase"
 import { AuthState, AuthAction, User } from "../../types/auth"
 
@@ -44,16 +44,40 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
 }
 
 // Create context
-const AuthContext = createContext<{
+interface AuthContextType {
   state: AuthState
   dispatch: React.Dispatch<AuthAction>
-} | null>(null)
+  logout: () => Promise<void>
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 // Auth provider component
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState)
 
+  // Logout function
+  const logout = async () => {
+    try {
+      if (auth) {
+        await signOut(auth)
+      }
+      dispatch({ type: "LOGOUT" })
+    } catch (error) {
+      console.error("Logout error:", error)
+      // Even if Firebase logout fails, clear local state
+      dispatch({ type: "LOGOUT" })
+    }
+  }
+
   useEffect(() => {
+    // Only set up auth listener if Firebase auth is available
+    if (!auth) {
+      console.warn("Firebase auth not available - using development mode")
+      dispatch({ type: "SET_LOADING", payload: false })
+      return
+    }
+
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser: FirebaseUser | null) => {
       if (firebaseUser) {
         // Handle authenticated user
@@ -79,16 +103,20 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
     })
 
-    return () => unsubscribe()
+    return () => {
+      if (unsubscribe && typeof unsubscribe === "function") {
+        unsubscribe()
+      }
+    }
   }, [])
 
-  return <AuthContext.Provider value={{ state, dispatch }}>{children}</AuthContext.Provider>
+  return <AuthContext.Provider value={{ state, dispatch, logout }}>{children}</AuthContext.Provider>
 }
 
 // Custom hook to use auth context
 export const useAuth = () => {
   const context = useContext(AuthContext)
-  if (!context) {
+  if (context === undefined) {
     throw new Error("useAuth must be used within an AuthProvider")
   }
   return context

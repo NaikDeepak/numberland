@@ -18,15 +18,53 @@ Numberland Adventures transforms math practice into:
 - **Immediate**: Instant feedback and visual rewards
 - **Inclusive**: Visual and audio support for all learners
 
+## Design Vision & Visual Identity
+
+### 🎨 Color Palette
+- **Primary**: Bright Blue (#4A90E2) → trust, friendly
+- **Secondary**: Sunny Yellow (#FFD93D) → fun, cheerful
+- **Accent**: Fresh Green (#6BCB77) → success, progress
+- **Error/Retry**: Soft Red (#FF6B6B) → playful, not scary
+- **Background**: Light Sky/Off-White (#F7F9FC)
+
+### 🖼️ Visual Style
+- **Rounded corners** (2xl), big friendly buttons
+- **Cartoon icons** (coins, treasure chest, monsters, stars)
+- **Avatar placeholder**: smiling kid explorer with backpack
+- **Progress as "Adventure Map"** or "XP bar with stars"
+- **Simple geometric shapes** for math objects (apples, blocks, coins)
+
+### 🧩 UI Elements
+- **Login screen**: playful background (school, jungle, or island theme), avatar placeholder, name input
+- **Quest screen**: big "Start Today's Quest" button (treasure chest style), animated mascot
+- **Question card**: large math question with illustrated objects (e.g., 3 apples + 2 apples)
+- **Feedback**: confetti + encouraging text ("Awesome!", "Try again!")
+- **Coins/Rewards**: golden coin icon, treasure chest animation on level-up
+- **Teacher dashboard**: clean, light UI (less cartoonish) → focus on tables & progress bars
+
+### 📱 UX Rules
+- Keep text **short** (kids 6–9 may have limited reading ability)
+- Use **icons + audio cues** alongside text
+- **One task per screen** (avoid clutter)
+- All interactive elements must be **large/tappable**
+- Keep a **5‑minute daily flow** → avoid long menus
+
+### 🔮 Placeholder Assets
+- **Avatar**: Cartoon explorer child (boy/girl variants)
+- **Icons**: coins, treasure chest, stars, check mark, retry arrow
+- **Background**: jungle/island theme illustration
+- **Question images**: apples, blocks, number cubes
+- **Sounds**: success chime, coin drop, friendly "oops" sound
+
 ## How It Should Work
 
 ### Student Journey
-1. **Login**: Simple name/class code entry
-2. **Daily Quest**: "Start Today's Adventure" button
-3. **Problem Solving**: 5 interactive math problems
-4. **Feedback**: Immediate positive reinforcement
-5. **Rewards**: Coins, badges, streak tracking
-6. **Progress**: Visual representation of growth
+1. **Login**: Simple name/class code entry with playful background
+2. **Daily Quest**: "Start Today's Adventure" button (treasure chest style)
+3. **Problem Solving**: 5 interactive math problems with illustrated objects
+4. **Feedback**: Immediate positive reinforcement with confetti and encouraging text
+5. **Rewards**: Coins, badges, streak tracking with treasure chest animations
+6. **Progress**: Visual representation of growth as adventure map or XP bar
 
 ### Teacher Journey
 1. **Setup**: Create class and share codes
@@ -42,12 +80,14 @@ Numberland Adventures transforms math practice into:
 - **Positive Reinforcement**: Celebrate every attempt, not just correct answers
 - **Progress Visibility**: Clear indicators of growth and achievement
 - **Safe Environment**: No penalties, only encouragement
+- **Playful Design**: Bright colors, cartoon elements, adventure theme
 
 #### For Teachers
 - **Zero Setup**: Minimal configuration required
 - **Quick Insights**: At-a-glance progress overview
 - **Actionable Data**: Clear next steps for intervention
 - **Celebration Tools**: Easy ways to recognize student success
+- **Clean Interface**: Less cartoonish, focus on data and progress
 
 ## Key Features & Functionality
 

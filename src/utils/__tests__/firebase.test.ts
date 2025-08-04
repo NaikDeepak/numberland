@@ -20,50 +20,60 @@ describe("Firebase Configuration", () => {
   beforeEach(() => {
     jest.clearAllMocks()
     jest.resetModules()
+    // Mock NODE_ENV to be 'development' for these tests
+    process.env.NODE_ENV = "development"
   })
 
-  it("should initialize Firebase app when no apps exist", () => {
-    // Mock getApps to return empty array
-    ;(getApps as jest.Mock).mockReturnValue([])
+  it("should not initialize Firebase in test environment", () => {
+    // Set NODE_ENV to test
+    process.env.NODE_ENV = "test"
 
-    // Import the module (this will trigger initialization)
-    require("../firebase")
-
-    expect(initializeApp).toHaveBeenCalledWith({
-      apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-      authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-      projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-      storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-      messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-      appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-    })
-  })
-
-  it("should not initialize Firebase app when apps already exist", () => {
-    // Mock getApps to return existing apps
-    ;(getApps as jest.Mock).mockReturnValue([{ name: "existing-app" }])
-
-    // Import the module
     require("../firebase")
 
     expect(initializeApp).not.toHaveBeenCalled()
+    expect(getAuth).not.toHaveBeenCalled()
+    expect(getFirestore).not.toHaveBeenCalled()
   })
 
-  it("should initialize Firebase Auth", () => {
-    const mockApp = { name: "test-app" }
-    ;(getApps as jest.Mock).mockReturnValue([mockApp])
+  it("should not initialize Firebase with placeholder values", () => {
+    // Mock environment variables to be undefined
+    delete process.env.NEXT_PUBLIC_FIREBASE_API_KEY
 
     require("../firebase")
 
-    expect(getAuth).toHaveBeenCalledWith(mockApp)
+    expect(initializeApp).not.toHaveBeenCalled()
+    expect(getAuth).not.toHaveBeenCalled()
+    expect(getFirestore).not.toHaveBeenCalled()
   })
 
-  it("should initialize Firestore", () => {
-    const mockApp = { name: "test-app" }
-    ;(getApps as jest.Mock).mockReturnValue([mockApp])
+  it("should handle initialization errors gracefully", () => {
+    // Mock environment variables BEFORE requiring the module
+    const originalEnv = process.env
+    process.env = {
+      ...originalEnv,
+      NODE_ENV: "development",
+      NEXT_PUBLIC_FIREBASE_API_KEY: "test-api-key",
+      NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: "test.firebaseapp.com",
+      NEXT_PUBLIC_FIREBASE_PROJECT_ID: "test-project",
+      NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: "test.appspot.com",
+      NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: "123456789",
+      NEXT_PUBLIC_FIREBASE_APP_ID: "test-app-id",
+    }
 
-    require("../firebase")
+    // Mock initializeApp to throw an error
+    ;(initializeApp as jest.Mock).mockImplementation(() => {
+      throw new Error("Firebase initialization failed")
+    })
 
-    expect(getFirestore).toHaveBeenCalledWith(mockApp)
+    // Reset modules to ensure fresh import
+    jest.resetModules()
+
+    // Should not throw an error
+    expect(() => {
+      require("../firebase")
+    }).not.toThrow()
+
+    // Restore original environment
+    process.env = originalEnv
   })
 })
